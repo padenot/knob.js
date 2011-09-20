@@ -7,7 +7,7 @@
   }
   .knob {
     width: 30px;
-    height: 200px;
+    height: 400px;
     border: 1px black solid;
     padding-top:12px;
     padding-bottom:12px;
@@ -30,10 +30,14 @@
     text-align: center;
     font-size: 0.6em;
   }
+  #speed {
+    border: 1px red solid;
+  }
 </style>
 </head>
 <div id="knob">
 </div>
+<div id="speed">0</div>
 <script src="../knob.js"></script>
 <script>
 var aknob = new Knob(document.querySelector('#knob'));
