@@ -156,7 +156,8 @@ function Knob(element, width, height) {
 
   document.addEventListener("mouseup", function(e) {
     if (knob) {
-      if(knob.element.value != knob.element.max && knob.element.value != knob.element.min) {
+      // Don't bouce or decelerate if we are slow
+      if(knob.element.value != knob.element.max && knob.element.value != knob.element.min || Math.abs(knob.dy) > 10) {
         startDecelerate(knob.element, knob.dy);
       }
       knob = null;
