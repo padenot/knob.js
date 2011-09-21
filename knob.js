@@ -7,8 +7,20 @@ function log(msg) {
   }
 }
 
+function getOffset( el ) {
+    var _x = 0;
+    var _y = 0;
+    while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+        _x += el.offsetLeft - el.scrollLeft;
+        _y += el.offsetTop - el.scrollTop;
+        el = el.offsetParent;
+    }
+    return { top: _y, left: _x };
+}
+
+
 function distance(ox, oy, px, py) {
-      return Math.sqrt(Math.pow(ox - px, 2) + Math.pow(oy - py, 2));
+  return Math.sqrt(Math.pow(ox - px, 2) + Math.pow(oy - py, 2));
 }
 
 function Knob(element, width, height) {
@@ -40,76 +52,116 @@ function Knob(element, width, height) {
   var that = this;
 
   this.slider.addEventListener("mousedown", function(e) {
-    knob = {element: that,
-            x:e.clientX,
-            y:e.clientY,
-            dx: 0,
-            dy: 0};
+    if (e.button == 0) {
+      if(e.preventDefault) {
+        e.preventDefault();
+      }
+      knob = {element: that,
+              x:e.clientX,
+              y:e.clientY,
+              dx: 0,
+              dy: 0};
+      return false;
+    }
   }, false);
 
   this.slider.addEventListener("click", function(e) {
     var m_y = e.clientY;
     var thumb = that.inside;
-    var value = ((m_y - that.slider.offsetTop) / that.slider.offsetHeight) * that.max;
+    var pos = getOffset(that.slider);
+    var value = ((m_y - pos.top) / that.slider.offsetHeight) * that.max;
     that.setValue(value);
   }, false);
 
   document.addEventListener("mousemove", function(e) {
-    if (knob && !knob.decreasing) {
+    if (knob) {
+      document.body.focus();
       knob.dx = knob.x - e.clientX;
       knob.dy = knob.y - e.clientY;
       knob.x = e.clientX;
       knob.y = e.clientY;
+      var pos = getOffset(that.slider);
       var m_y = e.clientY;
-      if (m_y < that.slider.offsetTop) {
-        m_y = that.slider.offsetTop;
+      log(m_y +" "+ pos.top + " " + that.slider.offsetHeight);
+      if (m_y < pos.top) {
+        m_y = pos.top;
       }
-      if (m_y >= (that.slider.offsetHeight)) {
-        m_y = that.slider.offsetHeight + that.slider.offsetTop;
+      if (m_y >= (pos.top + that.slider.offsetHeight)) {
+        m_y = pos.top + that.slider.offsetHeight;
       }
-      var value = (m_y - that.slider.offsetTop)/ that.slider.offsetHeight * knob.element.max;
+      var value = (m_y - pos.top)/ (that.slider.offsetHeight) * knob.element.max;
       knob.element.setValue(value);
     }
   }, false);
 
-  this.slider.addEventListener("DOMMouseScroll", function(e) {
+  this.slider.addEventListener("DOMMouseScroll", onscroll, false);
+  this.slider.addEventListener("mousewheel", onscroll, false);
+ 
+  var scrollDuration = 0;
+  var isScrolling = false;
+
+  function onscroll(e) {
+    isScrolling = true;
+    var delta = 0;
+    if (e.wheelDelta != undefined) {
+      delta = -e.wheelDelta / 30;
+    } else {
+      delta = e.detail;
+    }
+    scrollDuration++;
     var factor = 1;
     if (e.altKey) {
       factor = 10;
     } else if (e.shiftKey) {
       factor = 0.1;
     }
-    if(e.detail > 0) { // mousewheel down
+    if(delta > 0) { // mousewheel down
       that.setValue(that.value + that.increment * factor);
+      startDecelerate(that, -scrollDuration);
     } else { // mousewheel up
       that.setValue(that.value - that.increment * factor);
+      startDecelerate(that, scrollDuration);
     }
-  }, false);
+  }
+
+  function startDecelerate(element, initialSpeed) {
+    var speed = initialSpeed;
+    if (initialSpeed == 1) return;
+    var factor = 0.99;
+    function momentum() {
+      if (isScrolling == true) {
+        isScrolling = false;
+        setTimeout(momentum, 33);
+        return;
+      }
+      if (Math.abs(factor) > 0.1) {
+        // reset the scroll duration counter
+        scrollDuration = 0;
+        factor *= factor;
+        var computedValue = element.value - speed * factor * 0.1;
+        if( computedValue > element.max*0.99 || computedValue < element.min * 0.99) {
+          speed = -speed*0.7;
+        }
+        element.setValue(computedValue);
+        setTimeout(function() {
+          momentum();
+        }, 33);
+      } else {
+        knob = null;
+        scrollDuration = 0;
+      }
+    }
+    momentum();
+  }
 
   document.addEventListener("mouseup", function(e) {
     if (knob) {
-      if(Math.abs(knob.dy) > 0.1) {
-        document.querySelector('#speed').innerHTML = knob.dy;
-        var decr = 0.99;
-        function decrease() {
-          knob.decreasing = true;
-          log("decrease : " + knob.dy);
-          if (Math.abs(knob.dy) > 0.1 && Math.abs(knob.dy) > 0) {
-            knob.dy = knob.dy * decr;
-            decr = decr * decr;
-            var inc = knob.dy > 0 ? knob.element.increment * 0.1 : - knob.element.increment * 0.1;
-            knob.element.setValue(knob.element.value - inc);
-            setTimeout(decrease, 20);
-          } else {
-            log("setting to null");
-            knob = null;
-          }
-        }
-        decrease();
-      } else {
-        knob = null;
+      if(Math.abs(knob.dy) > 0.1 && knob.element.value != knob.element.max && knob.element.value != knob.element.min) {
+        startDecelerate(knob.element, knob.dy);
       }
     }
+    log("knob is null");
+    knob = null;
   }, false);
 }
 
