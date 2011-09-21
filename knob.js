@@ -45,6 +45,7 @@ document.addEventListener("mousemove", function(e) {
 
 
 function Knob(element, width, height) {
+  this.callbackValueChange = null;
   this.root = element;
   this.max = 100;
   this.min = 0;
@@ -173,4 +174,11 @@ Knob.prototype.setValue = function(value) {
   }
   this.inside.style.top = this.value / this.max * 100 + "%";
   this.label.value = ((this.value * 10) | 0) / 10;
+  if (this.callbackValueChange) {
+    this.callbackValueChange(this.value);
+  }
+}
+
+Knob.prototype.onValueChange = function(callback) {
+  this.callbackValueChange = callback;
 }

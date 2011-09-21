@@ -17,10 +17,18 @@
 </div>
 <script src="../knob.js"></script>
 <script>
-knobs = document.querySelectorAll(".slider");
-for(var i = 0; i < knobs.length; i++) {
-  var k = new Knob(knobs[i]);
-  k.setValue(50);
+knobs_elements = document.querySelectorAll(".slider");
+knobs_objects = [];
+for(var i = 0; i < knobs_elements.length; i++) {
+  knobs_objects.push(new Knob(knobs_elements[i]));
+  knobs_objects[i].setValue(100);
 }
+knobs_objects[0].onValueChange(function(value) {
+  document.getElementsByTagName("h1")[0].style.opacity = value / 100;
+});
+
+knobs_objects[1].onValueChange(function(value) {
+  document.getElementsByTagName("p")[0].style.opacity = value / 100;
+});
 </script>
 </html>
