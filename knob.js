@@ -23,6 +23,27 @@ function distance(ox, oy, px, py) {
   return Math.sqrt(Math.pow(ox - px, 2) + Math.pow(oy - py, 2));
 }
 
+document.addEventListener("mousemove", function(e) {
+  if (knob) {
+    document.body.focus();
+    knob.dx = knob.x - e.clientX;
+    knob.dy = knob.y - e.clientY;
+    knob.x = e.clientX;
+    knob.y = e.clientY;
+    var pos = getOffset(knob.element.slider);
+    var m_y = e.clientY;
+    if (m_y < pos.top) {
+      m_y = pos.top;
+    }
+    if (m_y >= (pos.top + knob.element.slider.offsetHeight)) {
+      m_y = pos.top + knob.element.slider.offsetHeight;
+    }
+    var value = (m_y - pos.top)/ (knob.element.slider.offsetHeight) * knob.element.max;
+    knob.element.setValue(value);
+  }
+}, false);
+
+
 function Knob(element, width, height) {
   this.root = element;
   this.max = 100;
@@ -61,7 +82,6 @@ function Knob(element, width, height) {
               y:e.clientY,
               dx: 0,
               dy: 0};
-      return false;
     }
   }, false);
 
@@ -71,27 +91,6 @@ function Knob(element, width, height) {
     var pos = getOffset(that.slider);
     var value = ((m_y - pos.top) / that.slider.offsetHeight) * that.max;
     that.setValue(value);
-  }, false);
-
-  document.addEventListener("mousemove", function(e) {
-    if (knob) {
-      document.body.focus();
-      knob.dx = knob.x - e.clientX;
-      knob.dy = knob.y - e.clientY;
-      knob.x = e.clientX;
-      knob.y = e.clientY;
-      var pos = getOffset(that.slider);
-      var m_y = e.clientY;
-      log(m_y +" "+ pos.top + " " + that.slider.offsetHeight);
-      if (m_y < pos.top) {
-        m_y = pos.top;
-      }
-      if (m_y >= (pos.top + that.slider.offsetHeight)) {
-        m_y = pos.top + that.slider.offsetHeight;
-      }
-      var value = (m_y - pos.top)/ (that.slider.offsetHeight) * knob.element.max;
-      knob.element.setValue(value);
-    }
   }, false);
 
   this.slider.addEventListener("DOMMouseScroll", onscroll, false);
@@ -156,12 +155,11 @@ function Knob(element, width, height) {
 
   document.addEventListener("mouseup", function(e) {
     if (knob) {
-      if(Math.abs(knob.dy) > 0.1 && knob.element.value != knob.element.max && knob.element.value != knob.element.min) {
+      if(knob.element.value != knob.element.max && knob.element.value != knob.element.min) {
         startDecelerate(knob.element, knob.dy);
       }
+      knob = null;
     }
-    log("knob is null");
-    knob = null;
   }, false);
 }
 
@@ -173,7 +171,6 @@ Knob.prototype.setValue = function(value) {
   } else {
     this.value = value;
   }
-
-  this.root.querySelector('.inside').style.top = this.value / this.max * 100 + "%";
+  this.inside.style.top = this.value / this.max * 100 + "%";
   this.label.value = ((this.value * 10) | 0) / 10;
 }

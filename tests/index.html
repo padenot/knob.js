@@ -9,13 +9,18 @@
 <p>
 <div class="wrap">
   <div class="cell">
-    <div id="knob">
-    </div>
+    <div class="slider"> </div>
+  </div>
+  <div class="cell">
+    <div class="slider"> </div>
   </div>
 </div>
 <script src="../knob.js"></script>
 <script>
-var aknob = new Knob(document.querySelector('#knob'));
-aknob.setValue(50);
+knobs = document.querySelectorAll(".slider");
+for(var i = 0; i < knobs.length; i++) {
+  var k = new Knob(knobs[i]);
+  k.setValue(50);
+}
 </script>
 </html>
