@@ -14,17 +14,42 @@
   <div class="cell">
     <div class="slider"> </div>
   </div>
+  <div class="cell">
+    <div class="slider"> </div>
+  </div>
 </div>
 <script src="../knob.js"></script>
 <script>
+var param = {
+  width: "30px",
+  height: "200px",
+  min: 0,
+  max: 100,
+  progression: "linear",
+  type: "vertical",
+  unit: ""
+};
 knobs_elements = document.querySelectorAll(".slider");
 knobs_objects = [];
-for(var i = 0; i < knobs_elements.length; i++) {
-  knobs_objects.push(new Knob(knobs_elements[i]));
-  knobs_objects[i].setValue(100);
-}
+knobs_objects.push(new Knob(knobs_elements[0], param));
+param.type = "horizontal";
+param.width = "300px";
+param.height = "30px";
+knobs_objects.push(new Knob(knobs_elements[1], param));
+// A circular knob has widht == height. If these are different, the largest
+// wins.
+param.type = "circular";
+param.width = "100px";
+param.height = "30px";
+param.incremenent = 0.5;
+knobs_objects.push(new Knob(knobs_elements[2], param));
+
 knobs_objects[0].onValueChange(function(value) {
   document.getElementsByTagName("h1")[0].style.opacity = value / 100;
+});
+
+knobs_objects[1].onValueChange(function(value) {
+  document.getElementsByTagName("p")[0].style.opacity = value / 100;
 });
 
 knobs_objects[1].onValueChange(function(value) {
