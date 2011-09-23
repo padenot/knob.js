@@ -261,7 +261,7 @@ function updateViewCircular() {
   var angle = (this.value / this.max) * 1.75 * Math.PI;
   angle += Math.PI + Math.PI / 2 + Math.PI / 8;
   this.inside.style.right = (Math.cos(angle)) * 35 - 40 + "%";
-  this.inside.style.bottom = (Math.sin(angle)) * 35 - 45 + "%";
+  this.inside.style.bottom = (Math.sin(angle)) * 35 - 42 + "%";
 }
 
 function mousemovedVertical(x, y) {
@@ -299,8 +299,7 @@ function mousemovedCircular(x, y) {
     y = this.slider.offsetHeight*4;
   }
   var value = ((y / (this.slider.offsetHeight*4))) * this.max;
-  value=this.max-value;
-  value = Math.abs(value);
+  value=this.max-value/2;
   this.setValue(value);
 }
 
