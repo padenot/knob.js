@@ -246,6 +246,35 @@ function Knob(element, param) {
     knob = null;
   }
 
+  function updateViewVertical() {
+    this.inside.style.top = this.max - this.value / this.max * 100 + "%";
+  }
+
+  function mousemovedVertical(x, y) {
+    this.setValue(this.value + knob.dy / 2);
+  }
+
+  function updateViewHorizontal() {
+    this.inside.style.left = this.value / this.max * 100 + "%";
+  }
+
+  function mousemovedHorizontal(x, y) {
+    this.setValue(this.value - knob.dx / 3);
+  }
+
+  function updateViewCircular() {
+    var angle = (this.value / this.max) * 1.75 * Math.PI;
+    angle += Math.PI + Math.PI / 8;
+    this.inside.style.left = (Math.sin(angle)) * (this.height/3) + this.height/2 - this.inside.width/2 + "px";
+    this.inside.style.bottom = (Math.cos(angle)) * (this.height/3) - this.height/2 + this.inside.height/2 + "px";
+  }
+
+  function mousemovedCircular(x, y) {
+    var pos = getOffset(this.slider);
+    value = knob.dy / 4;
+    this.setValue(this.value + value);
+  }
+
   this.setValue(this.min);
 }
 
@@ -268,35 +297,6 @@ Knob.prototype.setValue = function(value) {
 
 Knob.prototype.onValueChange = function(callback) {
   this.callbackValueChange = callback;
-}
-
-function updateViewVertical() {
-  this.inside.style.top = this.max - this.value / this.max * 100 + "%";
-}
-
-function updateViewHorizontal() {
-  this.inside.style.left = this.value / this.max * 100 + "%";
-}
-
-function updateViewCircular() {
-  var angle = (this.value / this.max) * 1.75 * Math.PI;
-  angle += Math.PI + Math.PI / 8;
-  this.inside.style.left = (Math.sin(angle)) * (this.height/3) + this.height/2 - this.inside.width/2 + "px";
-  this.inside.style.bottom = (Math.cos(angle)) * (this.height/3) - this.height/2 + this.inside.height/2 + "px";
-}
-
-function mousemovedVertical(x, y) {
-  this.setValue(this.value + knob.dy / 2);
-}
-
-function mousemovedHorizontal(x, y) {
-  this.setValue(this.value - knob.dx / 3);
-}
-
-function mousemovedCircular(x, y) {
-  var pos = getOffset(this.slider);
-  value = knob.dy / 4;
-  this.setValue(this.value + value);
 }
 
 
