@@ -58,12 +58,9 @@ body {
 }
 
 .verticalFader {
-  margin-top: 1em;
   margin-left: 1em;
   margin-right: 1em;
   border: 1px black solid;
-  padding-top:12px;
-  padding-bottom:12px;
   border-radius: 4px;
   background: -moz-linear-gradient(left, rgba(70,70,70,1) 0%, rgba(128,128,128,1) 44%, rgba(0,0,0,1) 50%,rgba(128,128,128,1) 56%, rgba(70,70,70,1) 100%);
   background: -webkit-linear-gradient(left, rgba(70,70,70,1) 0%, rgba(128,128,128,1) 44%, rgba(0,0,0,1) 50%,rgba(128,128,128,1) 56%, rgba(70,70,70,1) 100%);
@@ -72,12 +69,7 @@ body {
 
 .horizontalFader {
   display:table-cell;
-  margin-top: 1em;
-  margin-left: 1em;
-  margin-right: 1em;
   border: 1px black solid;
-  padding-right:12px;
-  padding-left:12px;
   border-radius: 4px;
   background: -moz-linear-gradient(top, rgba(70,70,70,1) 0%, rgba(128,128,128,1) 44%, rgba(0,0,0,1) 50%,rgba(128,128,128,1) 56%, rgba(70,70,70,1) 100%);
   background: -webkit-linear-gradient(top, rgba(70,70,70,1) 0%, rgba(128,128,128,1) 44%, rgba(0,0,0,1) 50%,rgba(128,128,128,1) 56%, rgba(70,70,70,1) 100%);
@@ -97,20 +89,14 @@ body {
 }
 
 .circularFader > .inside {
-  width: 15px;
-  height: 15px;
   position: relative;
-  background-image: -moz-radial-gradient(60% 40%, circle closest-corner, rgba(128,128,128,1), rgba(70,70,70,1) 80%);
+  background-image: -moz-radial-gradient(50% 50%, circle closest-corner, rgba(128,128,128,0), rgba(90,90,90,1) 10%, rgba(0,0,0,1) 100%);
   background-image: -webkit-radial-gradient(50% 50%, circle closest-corner, #404040, rgba(0, 0, 0, 0) 1%,#000000 100%);
   border: 1px rgba(0,0,0,0.5) solid;
   border-radius: 100%;
 }
 
 .verticalFader > .inside {
-  width: 26px;
-  margin-left: 1px;
-  margin-top: -10px;
-  height: 20px;
   position: relative;
   background: black;
   border: 1px black solid;
@@ -121,10 +107,6 @@ body {
 }
 
 .horizontalFader > .inside {
-  height: 26px;
-  margin-top: 1px;
-  margin-left: -10px;
-  width: 20px;
   position: relative;
   background: black;
   border: 1px black solid;
@@ -136,7 +118,6 @@ body {
 
 .label {
   width: 30px;
-  margin-left: 1px;
   border-radius: 4px;
   text-align: center;
   font-size: 0.6em;

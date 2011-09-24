@@ -52,14 +52,27 @@ function Knob(element, param) {
   this.max = param.max || 100;
   this.min = param.min || 0;
   this.increment = param.increment || 1;
-  this.width = param.width || "3Opx";
-  this.height = param.height || "300px";
+  this.width = param.width || "3O";
+  this.height = param.height || "300";
   this.type = param.type || "vertical";
   this.value = this.min;
   this.unit = param.unit || "";
 
   this.slider = document.createElement('div');
-    var that = this;
+  var that = this;
+
+  this.root.appendChild(this.slider);
+
+  this.inside = document.createElement('div');
+  this.inside.className = "inside";
+  this.slider.appendChild(this.inside);
+
+  this.label = document.createElement('input');
+  this.label.className = "label";
+  this.label.addEventListener("change", function() {
+    that.setValue(that.label.value);
+  }, false);
+  this.root.appendChild(this.label)
 
   switch (this.type) {
     case "vertical":
@@ -67,6 +80,14 @@ function Knob(element, param) {
       this.mouseMoved = mousemovedVertical;
       this.updateView = updateViewVertical;
       this.slider.addEventListener("click", fader_onclick_vertical, false);
+      this.inside.width = this.width - this.width / 5;
+      this.inside.height = this.height / 10;
+      this.slider.style.paddingTop = this.height / 15 + "px";
+      this.slider.style.paddingBottom = this.height / 15 + "px";
+      this.inside.style.height = this.inside.height + "px";
+      this.inside.style.marginLeft = this.inside.width / 10 + "px";
+      this.inside.style.marginTop = -this.inside.height / 2 + "px";
+      this.inside.style.width = this.inside.width + "px";
       document.addEventListener("mouseup", function(e) {
         if (knob) {
           onmouseup(knob.dy);
@@ -78,6 +99,14 @@ function Knob(element, param) {
       this.mouseMoved = mousemovedHorizontal;
       this.updateView = updateViewHorizontal;
       this.slider.addEventListener("click", fader_onclick_horizontal, false);
+      this.inside.height = this.height - this.height / 5;
+      this.inside.width = this.width / 15;
+      this.slider.style.paddingRight = this.width / 20 + "px";
+      this.slider.style.paddingLeft = this.width / 20 + "px";
+      this.inside.style.height = this.inside.height + "px";
+      this.inside.style.marginTop = this.inside.height / 10 + "px";
+      this.inside.style.marginLeft = -this.inside.width / 2 + "px";
+      this.inside.style.width = this.inside.width + "px";
       document.addEventListener("mouseup", function(e) {
         if (knob) {
           onmouseup(knob.dx);
@@ -90,6 +119,8 @@ function Knob(element, param) {
       this.mouseMoved = mousemovedCircular;
       this.updateView = updateViewCircular;
       this.slider.addEventListener("click", fader_onclick_circular, false);
+      this.inside.width = this.inside.height = param.insideSize || this.height / 8;
+      this.inside.style.width = this.inside.style.height = this.inside.width + "px";
       document.addEventListener("mouseup", function(e) {
         if (knob) {
           onmouseup(knob.dy);
@@ -100,21 +131,8 @@ function Knob(element, param) {
       throw "type != (vertical|horizontal|circular)";
   }
 
-  this.slider.style.height = this.height;
-  this.slider.style.width = this.width;
-  this.root.appendChild(this.slider);
-
-  this.inside = document.createElement('div');
-  this.inside.className = "inside";
-  this.slider.appendChild(this.inside);
-
-  this.label = document.createElement('input');
-  this.label.className = "label";
-  this.label.innerHTML = "0.0";
-  this.label.addEventListener("change", function() {
-    that.setValue(that.label.value);
-  }, false);
-  this.root.appendChild(this.label)
+  this.slider.style.height = this.height + "px";
+  this.slider.style.width = this.width + "px";
 
 
   function onmousedown(e) {
@@ -131,7 +149,6 @@ function Knob(element, param) {
         dx: 0,
         dy: 0};
     }
-    document.addEventListener("mouseup", this.onmouseup, false);
   }
 
   function normalize(value, offset, maxValue, maxFinal) {
@@ -146,8 +163,12 @@ function Knob(element, param) {
   var scrollDuration = 0;
   var isScrolling = false;
 
-  function startDecelerate(element, initialSpeed) {
-    var speed = initialSpeed;
+  function startDecelerate(element, initialSpeed, direction) {
+    direction = direction || -1;
+    if (element.type == "horizontal") {
+      direction = 1;
+    }
+    var speed = initialSpeed * direction;
     if (initialSpeed == 1) return;
     var factor = 0.99;
     function momentum() {
@@ -161,13 +182,12 @@ function Knob(element, param) {
         scrollDuration = 0;
         factor *= factor;
         var computedValue = element.value - speed * factor * 0.1;
+        // decrease speed when we bounce
         if( computedValue > element.max*0.99 || computedValue < element.min * 0.99) {
-          speed = -speed*0.7;
+          speed = -speed*0.3;
         }
         element.setValue(computedValue);
-        setTimeout(function() {
-          momentum();
-        }, 33);
+        setTimeout(momentum, 33);
       } else {
         knob = null;
         scrollDuration = 0;
@@ -180,7 +200,7 @@ function Knob(element, param) {
     isScrolling = true;
     var delta = 0;
     if (e.wheelDelta != undefined) {
-      delta = -e.wheelDelta / 30;
+      delta = -e.wheelDelta / 20;
     } else {
       delta = e.detail;
     }
@@ -192,17 +212,17 @@ function Knob(element, param) {
       factor = 0.1;
     }
     if(delta > 0) { // mousewheel down
-      that.setValue(that.value + that.increment * factor);
-      startDecelerate(that, -scrollDuration);
-    } else { // mousewheel up
       that.setValue(that.value - that.increment * factor);
-      startDecelerate(that, scrollDuration);
+      startDecelerate(that, scrollDuration, 1);
+    } else { // mousewheel up
+      that.setValue(that.value + that.increment * factor);
+      startDecelerate(that, -scrollDuration, 1);
     }
   }
 
   function fader_onclick_vertical(e) {
     var pos = getOffset(that.slider);
-    var value = normalize(e.clientY, pos.top, that.slider.offsetHeight, that.max);
+    var value = that.max - normalize(e.clientY, pos.top, that.slider.offsetHeight, that.max);
     that.setValue(value);
   }
 
@@ -213,10 +233,10 @@ function Knob(element, param) {
   }
 
   function fader_onclick_circular(e) {
+    // NOOP
   }
 
   function onmouseup(speed) {
-    document.removeEventListener("mouseup", onmouseup);
     // Don't bouce or decelerate if we are slow
     if(knob.element.value != knob.element.max &&
         knob.element.value != knob.element.min ||
@@ -239,7 +259,8 @@ Knob.prototype.setValue = function(value) {
     this.value = value;
   }
   this.updateView();
-  this.label.value = (((this.value * 10) | 0) / 10) + this.unit;
+  // Round to first decimal, and append unit
+  this.label.value = (((this.value * 10) | 0) / 10) + " " + this.unit;
   if (this.callbackValueChange) {
     this.callbackValueChange(this.value);
   }
@@ -250,7 +271,7 @@ Knob.prototype.onValueChange = function(callback) {
 }
 
 function updateViewVertical() {
-  this.inside.style.top = this.value / this.max * 100 + "%";
+  this.inside.style.top = this.max - this.value / this.max * 100 + "%";
 }
 
 function updateViewHorizontal() {
@@ -259,48 +280,23 @@ function updateViewHorizontal() {
 
 function updateViewCircular() {
   var angle = (this.value / this.max) * 1.75 * Math.PI;
-  angle += Math.PI + Math.PI / 2 + Math.PI / 8;
-  this.inside.style.right = (Math.cos(angle)) * 35 - 40 + "%";
-  this.inside.style.bottom = (Math.sin(angle)) * 35 - 42 + "%";
+  angle += Math.PI + Math.PI / 8;
+  this.inside.style.left = (Math.sin(angle)) * (this.height/3) + this.height/2 - this.inside.width/2 + "px";
+  this.inside.style.bottom = (Math.cos(angle)) * (this.height/3) - this.height/2 + this.inside.height/2 + "px";
 }
 
 function mousemovedVertical(x, y) {
-  var pos = getOffset(this.slider);
-  if (y < pos.top) {
-    y = pos.top;
-  }
-  if (y >= (pos.top + knob.element.slider.offsetHeight)) {
-    y = pos.top + knob.element.slider.offsetHeight;
-  }
-  var value = (y - pos.top)/ (knob.element.slider.offsetHeight) * knob.element.max;
-  knob.element.setValue(value);
+  this.setValue(this.value + knob.dy / 2);
 }
 
 function mousemovedHorizontal(x, y) {
-  var pos = getOffset(this.slider);
-  if (x < pos.top) {
-    x = pos.top;
-  }
-  if (x >= (pos.left + this.slider.offsetWidth)) {
-    x = pos.left + this.slider.offsetWidth;
-  }
-  var value = (x - pos.left)/ (this.slider.offsetWidth) * this.max;
-  this.setValue(value);
+  this.setValue(this.value - knob.dx / 3);
 }
 
 function mousemovedCircular(x, y) {
   var pos = getOffset(this.slider);
-  var center = pos.top + this.slider.offsetHeight/2;
-  log(center + " " + y);
-  if (y < (center - this.slider.offsetHeight*4)) {
-    y = 0;
-  }
-  if (y >= ((center + this.slider.offsetHeight)*4)) {
-    y = this.slider.offsetHeight*4;
-  }
-  var value = ((y / (this.slider.offsetHeight*4))) * this.max;
-  value=this.max-value/2;
-  this.setValue(value);
+  value = knob.dy / 4;
+  this.setValue(this.value + value);
 }
 
 
