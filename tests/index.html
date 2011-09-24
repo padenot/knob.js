@@ -64,20 +64,17 @@ param.width = "50";
 knobs_objects.push(new Knob(knobs_elements[5], param));
 
 knobs_objects[0].onValueChange(function(value) {
-  console.log("plop");
   document.getElementsByTagName("h1")[0].style.opacity = value / 100;
 });
 
 knobs_objects[1].onValueChange(function(value) {
   var str = "rotate("+-value/6+"deg)"
-  console.log(str);
   document.getElementsByTagName("div")[0].style.webkitTransform = str;
   document.getElementsByTagName("div")[0].style.MozTransform = str;
 });
 
 knobs_objects[2].onValueChange(function(value) {
   var str = "skew("+-value/6+"deg)"
-  console.log(str);
   document.getElementsByTagName("body")[0].style.webkitTransform = str;
   document.getElementsByTagName("body")[0].style.MozTransform = str;
 });
@@ -89,14 +86,12 @@ knobs_objects[3].onValueChange(function(value){
 
 knobs_objects[4].onValueChange(function(value){
   var str = "rotate("+value/10+"deg)"
-  console.log(str);
   document.getElementsByTagName("h1")[0].style.webkitTransform = str;
   document.getElementsByTagName("h1")[0].style.MozTransform = str;
 });
 
 knobs_objects[5].onValueChange(function(value){
   var str = "skew("+-value+"deg)"
-  console.log(str);
   document.getElementsByTagName("p")[0].style.webkitTransform = str;
   document.getElementsByTagName("p")[0].style.MozTransform = str;
 });
