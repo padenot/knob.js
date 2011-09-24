@@ -2,8 +2,9 @@
 <html>
 <head>
 <link rel="stylesheet" href="style.css" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=IM+Fell+DW+Pica' rel='stylesheet' type='text/css'>
 </head>
-<h1>A nice fader.</h1>
+<h1>knob.js, a nice fader library.</h1>
 <p>
   Smooth scrolling (mousewheel &amp; drag), bouncing &amp; direct value entry.
 <p>
@@ -68,11 +69,36 @@ knobs_objects[0].onValueChange(function(value) {
 });
 
 knobs_objects[1].onValueChange(function(value) {
-  document.getElementsByTagName("p")[0].style.opacity = value / 100;
+  var str = "rotate("+-value/6+"deg)"
+  console.log(str);
+  document.getElementsByTagName("div")[0].style.webkitTransform = str;
+  document.getElementsByTagName("div")[0].style.MozTransform = str;
 });
 
 knobs_objects[2].onValueChange(function(value) {
-  document.getElementsByTagName("p")[0].style.opacity = value / 100;
+  var str = "skew("+-value/6+"deg)"
+  console.log(str);
+  document.getElementsByTagName("body")[0].style.webkitTransform = str;
+  document.getElementsByTagName("body")[0].style.MozTransform = str;
+});
+
+knobs_objects[3].onValueChange(function(value){
+  var str = value/4 + "px " + value/4 + "px 4px black";
+  document.getElementsByTagName("h1")[0].style.textShadow = str;
+});
+
+knobs_objects[4].onValueChange(function(value){
+  var str = "rotate("+value/10+"deg)"
+  console.log(str);
+  document.getElementsByTagName("h1")[0].style.webkitTransform = str;
+  document.getElementsByTagName("h1")[0].style.MozTransform = str;
+});
+
+knobs_objects[5].onValueChange(function(value){
+  var str = "skew("+-value+"deg)"
+  console.log(str);
+  document.getElementsByTagName("p")[0].style.webkitTransform = str;
+  document.getElementsByTagName("p")[0].style.MozTransform = str;
 });
 </script>
 </html>
