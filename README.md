@@ -44,6 +44,8 @@ knob.onValueChange(function(value) {
 });
 ```
 
+Oh, and mind to link the CSS too, or it'll be ugly.
+
 ## Demo
 
 <http://paul.cx/public/knob.js/tests/>
