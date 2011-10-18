@@ -44,7 +44,7 @@ knob.onValueChange(function(value) {
 });
 ```
 
-Oh and maybe you want to include the css, too.
+Oh, and mind to link the CSS too, or it'll be ugly.
 
 ## Demo
 
