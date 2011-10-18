@@ -1,12 +1,14 @@
 <!doctype html>
 <html>
 <head>
+<title>knob.js demo page</title>
 <link rel="stylesheet" href="../knob.css" type="text/css" />
 </head>
+<body>
 <h1>knob.js, a nice fader library.</h1>
 <p>
   Smooth scrolling (mousewheel &amp; drag), bouncing &amp; direct value entry.
-<p>
+</p>
 <div class="wrap">
   <div class="cell">
     <div class="slider"> </div>
@@ -27,8 +29,8 @@
     <div class="slider"> </div>
   </div>
 </div>
-<script src="../knob.js"></script>
-<script>
+<script type="text/javasctipt" src="../knob.js"></script>
+<script type="text/javascript">
 var param = {
   width: "30",
   height: "150",
@@ -95,4 +97,5 @@ knobs_objects[5].onValueChange(function(value){
   document.getElementsByTagName("p")[0].style.MozTransform = str;
 });
 </script>
+</body>
 </html>
